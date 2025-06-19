@@ -2,8 +2,12 @@
 using EmailService.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.SqlServer.Server;
 using EmailService.Infrastructure.Settings;
+using EmailService.Application.Interfaces;
+using EmailService.Infrastructure.Services;
+using Microsoft.EntityFrameworkCore;
+using EmailService.Infrastructure.Database.StoredProcedures;
+
 
 namespace EmailService
 {
@@ -18,7 +22,14 @@ namespace EmailService
 
             // Bind SmtpSettings from appsettings.json
             builder.Services.Configure<SmtpSettings>(
-                builder.Configuration.GetSection("SmtpSettings"));  
+                builder.Configuration.GetSection("SmtpSettings"));
+
+            // Email sending service (infrastructure)
+            builder.Services.AddScoped<IEmailService, SmtpMailService>();
+
+            // Repository for DB access via stored procedures
+            builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+
 
             // Add services to the container.
 
@@ -39,7 +50,6 @@ namespace EmailService
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
