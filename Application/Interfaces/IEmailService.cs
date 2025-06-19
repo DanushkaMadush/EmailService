@@ -1,6 +1,10 @@
-﻿namespace EmailService.Application.Interfaces
+﻿using EmailService.Application.DTOs;
+using System.Threading.Tasks;
+
+namespace EmailService.Application.Interfaces
 {
-    public class IEmailService
+    public interface IEmailService
     {
+        Task<bool> SendEmailAsync(EmailRequestDto emailRequest, List<AttachmentDto>? attachments = null);
     }
 }
