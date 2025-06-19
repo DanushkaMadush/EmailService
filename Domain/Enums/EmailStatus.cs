@@ -1,6 +1,9 @@
 ﻿namespace EmailService.Domain.Enums
 {
-    public class EmailStatus
+    public enum EmailStatus
     {
+        Pending,
+        Sent,
+        Failed
     }
 }
