@@ -3,6 +3,7 @@ using EmailService.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.SqlServer.Server;
+using EmailService.Infrastructure.Settings;
 
 namespace EmailService
 {
@@ -14,6 +15,10 @@ namespace EmailService
 
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Bind SmtpSettings from appsettings.json
+            builder.Services.Configure<SmtpSettings>(
+                builder.Configuration.GetSection("SmtpSettings"));  
 
             // Add services to the container.
 
