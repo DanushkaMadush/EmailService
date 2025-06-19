@@ -1,4 +1,9 @@
 
+using EmailService.Infrastructure.Database;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.SqlServer.Server;
+
 namespace EmailService
 {
     public class Program
@@ -6,6 +11,9 @@ namespace EmailService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
 
