@@ -49,6 +49,8 @@ namespace EmailService
 
             app.UseHttpsRedirection();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
             app.UseAuthorization();
 
             app.MapControllers();
