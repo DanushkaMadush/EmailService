@@ -1,5 +1,6 @@
 ﻿using EmailService.Application.DTOs;
 using EmailService.Application.Interfaces;
+using EmailService.Shared.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmailService.Api.Controllers
@@ -18,31 +19,39 @@ namespace EmailService.Api.Controllers
         [HttpPost("send")]
         public async Task<IActionResult> SendEmail([FromForm] EmailRequestDto emailRequest, List<IFormFile>? files)
         {
-            // Convert uploaded files to attachment DTOs
-            var attachments = new List<AttachmentDto>();
-
-            if (files != null)
+             try
             {
-                foreach (var file in files)
+                var attachments = new List<AttachmentDto>();
+
+                if (files != null)
                 {
-                    using var ms = new MemoryStream();
-                    await file.CopyToAsync(ms);
-
-                    attachments.Add(new AttachmentDto
+                    foreach (var file in files)
                     {
-                        FileName = file.FileName,
-                        FileData = ms.ToArray(),
-                        ContentType = file.ContentType
-                    });
+                        using var ms = new MemoryStream();
+                        await file.CopyToAsync(ms);
+
+                        attachments.Add(new AttachmentDto
+                        {
+                            FileName = file.FileName,
+                            FileData = ms.ToArray(),
+                            ContentType = file.ContentType
+                        });
+                    }
                 }
+
+                var result = await _emailService.SendEmailAsync(emailRequest, attachments);
+
+                if (result)
+                    return Ok(ApiResponse<string>.SuccessResponse("Email sent successfully"));
+                else
+                    return StatusCode(500, ApiResponse<string>.Failure("Failed to send email"));
             }
-
-            var result = await _emailService.SendEmailAsync(emailRequest, attachments);
-
-            if (result)
-                return Ok(new { message = "Email sent successfully" });
-            else
-                return StatusCode(500, new { message = "Failed to send email" });
+            catch (Exception ex)
+            {
+                // Optional: Log the exception
+                return StatusCode(500, ApiResponse<string>.Failure($"Internal server error: {ex.Message}"));
+            }
         }
+
     }
 }
