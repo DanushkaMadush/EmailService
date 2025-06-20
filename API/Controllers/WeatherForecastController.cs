@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmailService.Controllers
+namespace EmailService.API.Controllers
 {
     [ApiController]
     [Route("[controller]")]
